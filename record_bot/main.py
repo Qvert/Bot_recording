@@ -28,7 +28,7 @@ async def echo_handler(message: types.Message) -> None:
 
 @dis.message(Command("help"))
 async def echo_handler(message: types.Message) -> None:
-    await message.answer("Ой биляяя чо тебе не понятно здесь?")
+    await message.answer("Ой биляя чо тебе не понятно здесь?")
 
 
 async def main() -> None:

@@ -23,6 +23,7 @@ async def command_start_handler(message: Message) -> None:
 
 @dis.message(Command("show"))
 async def echo_handler(message: types.Message) -> None:
+    logger.info(f"Start function: {echo_handler.__name__}")
     await message.answer("Тут будут показываться те, кто записан")
 
 

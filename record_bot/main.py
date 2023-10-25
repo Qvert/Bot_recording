@@ -3,11 +3,12 @@ from loguru import logger
 from os import getenv
 from dotenv import load_dotenv
 
-from aiogram import Bot, Dispatcher, types
+from aiogram import Bot, Dispatcher, types, F
 from aiogram.filters import CommandStart, Command
 from aiogram.types import Message
 
-from json_database.write_read_json import *
+from keyboard.inline_keyboard import inline_keyboard
+from callback_hundlers import *
 
 load_dotenv('../.env')
 TOKEN = getenv("BOT_TOKEN")
@@ -23,9 +24,10 @@ async def command_start_handler(message: Message) -> None:
 
 
 @dis.message(Command("show"))
-async def echo_handler(message: types.Message) -> None:
-    logger.info(f"Start function: {echo_handler.__name__}")
-    await message.answer("Тут будут показываться те, кто записан")
+async def show_handler(message: types.Message) -> None:
+    logger.info(f"Start function: {show_handler.__name__}")
+    await message.answer("Сначала выберите предмет",
+                         reply_markup=inline_keyboard.as_markup())
 
 
 @dis.message(Command("help"))
@@ -35,6 +37,9 @@ async def echo_handler(message: types.Message) -> None:
 
 async def main() -> None:
     bot = Bot(TOKEN)
+    dis.callback_query.register(callback=send_answer_vvv)
+    dis.callback_query.register(callback=send_answer_comp)
+    dis.callback_query.register(callback=send_answer_op)
     await dis.start_polling(bot)
 
 

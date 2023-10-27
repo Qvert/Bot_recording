@@ -1,25 +1,32 @@
 import asyncio
-from os import getenv
 import os
-from dotenv import load_dotenv
-from aiogram import Bot, Dispatcher, types, F
+from os import getenv
+
+from aiogram import Dispatcher, types, Bot
 from aiogram.filters import CommandStart, Command
+from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram.types import Message
+from dotenv import load_dotenv
+from loguru import logger
 
+from json_database.write_read_json import read_json
 from keyboard.inline_keyboard import inline_keyboard_add
-from callback_hundlers_add import *
+from keyboard.keyboard_admin import keyboard_admin
 
-load_dotenv('../.env')
+
+load_dotenv("../.env")
 TOKEN = getenv("BOT_TOKEN")
 
-
-dis = Dispatcher()
+storage = MemoryStorage()
+dis = Dispatcher(storage=storage)
 
 
 @dis.message(CommandStart())
 async def command_start_handler(message: Message) -> None:
-    await message.answer(f"Дарова заебал, {message.from_user.full_name}!\n"
-                         f"Этот бот поможет не потеряться в очереди)")
+    await message.answer(
+        f"Дарова заебал, {message.from_user.full_name}!\n"
+        f"Этот бот поможет не потеряться в очереди)"
+    )
 
 
 @dis.message(Command("show"))
@@ -42,8 +49,26 @@ async def show_subjects(message: types.Message) -> None:
 @dis.message(Command("add"))
 async def add_handler(message: types.Message) -> None:
     logger.info(f"Start function 'add_handler'")
-    await message.answer("Сначала выберите предмет",
-                         reply_markup=inline_keyboard_add.as_markup())
+    await message.answer(
+        "Сначала выберите предмет", reply_markup=inline_keyboard_add.as_markup()
+    )
+
+
+@dis.message(Command("admin"))
+async def admin_panel(message: types.Message) -> None:
+    logger.info(f"Start function 'admin_panel'")
+    if str(message.from_user.id) != str(getenv("USER_ADMIN_ID")):
+        await message.answer("Сюда только админ ONI-CHAN может зайти.")
+    else:
+        from admin.handlers_admin import delete_members, change_members
+
+        dis.message.register(delete_members)
+        dis.message.register(change_members)
+
+        await message.answer(
+            "Дорогой хозяйн выбери пожалуйста действие",
+            reply_markup=keyboard_admin,
+        )
 
 
 @dis.message(Command("help"))
@@ -53,12 +78,11 @@ async def echo_handler(message: types.Message) -> None:
 
 async def main() -> None:
     bot = Bot(TOKEN)
+    from callback_hundlers_add import add_vvv, add_comp, add_op
+
     dis.callback_query.register(callback=add_vvv)
     dis.callback_query.register(callback=add_op)
     dis.callback_query.register(callback=add_comp)
-    dis.message.register(add_members_vvpd)
-    dis.message.register(add_members_comp)
-    dis.message.register(add_members_op)
     await dis.start_polling(bot)
 
 

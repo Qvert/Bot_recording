@@ -15,7 +15,7 @@ from keyboard.keyboard_admin import keyboard_admin
 
 
 load_dotenv("../.env")
-TOKEN = getenv("BOT_TOKEN")
+TOKEN = '6955649038:AAFxCJYhgxGsiX_m-T_Pt47gPRBWQEU1nk0'
 
 storage = MemoryStorage()
 dis = Dispatcher(storage=storage)
@@ -57,7 +57,7 @@ async def add_handler(message: types.Message) -> None:
 @dis.message(Command("admin"))
 async def admin_panel(message: types.Message) -> None:
     logger.info(f"Start function 'admin_panel'")
-    if str(message.from_user.id) != str(getenv("USER_ADMIN_ID")):
+    if str(message.from_user.id) != '1195216595':
         await message.answer("Сюда только админ ONI-CHAN может зайти.")
     else:
         from admin.handlers_admin import admin_panel

@@ -22,7 +22,7 @@ async def add_vvv(callback: types.CallbackQuery, state: FSMContext):
         await callback.message.answer(
             "Чтобы записаться введите запись в формате: <номер> <ФИО>"
         )
-        await AddPracticeVVPD.add_to_dict.set()
+        await state.set_state(AddPracticeVVPD.add_to_dict)
     else:
         await callback.message.answer("Вот список записанных в очередь\n")
         answer_string = ""
@@ -32,7 +32,7 @@ async def add_vvv(callback: types.CallbackQuery, state: FSMContext):
         await callback.message.answer(
             "Теперь пожалуйста запишитесь в формате: <номер> <ФИО>"
         )
-        await AddPracticeVVPD.add_to_dict.set()
+        await state.set_state(AddPracticeVVPD.add_to_dict)
 
 
 @dis.callback_query(F.data == "add_comp")
@@ -45,7 +45,7 @@ async def add_comp(callback: types.CallbackQuery, state: FSMContext):
         await callback.message.answer(
             "Чтобы записаться введите запись в формате: <номер> <ФИО>"
         )
-        await AddPracticeComp.add_to_dict.set()
+        await state.set_state(AddPracticeComp.add_to_dict)
     else:
         await callback.message.answer("Вот список записанных в очередь\n")
         answer_string = ""
@@ -55,7 +55,7 @@ async def add_comp(callback: types.CallbackQuery, state: FSMContext):
         await callback.message.answer(
             "Теперь пожалуйста запишитесь в формате: <номер> <ФИО>"
         )
-        await AddPracticeComp.add_to_dict.set()
+        await state.set_state(AddPracticeComp.add_to_dict)
 
 
 @dis.callback_query(F.data == "add_op")
@@ -68,7 +68,7 @@ async def add_op(callback: types.CallbackQuery, state: FSMContext):
         await callback.message.answer(
             "Чтобы записаться введите запись в формате: <номер> <ФИО>"
         )
-        await AddPracticeOP.add_to_dict.set()
+        await state.set_state(AddPracticeOP.add_to_dict)
     else:
         await callback.message.answer("Вот список записанных в очередь\n")
         answer_string = ""
@@ -78,4 +78,4 @@ async def add_op(callback: types.CallbackQuery, state: FSMContext):
         await callback.message.answer(
             "Теперь пожалуйста запишитесь в формате: <номер> <ФИО>"
         )
-        await AddPracticeOP.add_to_dict.set()
+        await state.set_state(AddPracticeOP.add_to_dict)

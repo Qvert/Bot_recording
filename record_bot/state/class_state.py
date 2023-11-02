@@ -11,7 +11,3 @@ class AddPracticeOP(StatesGroup):
 
 class AddPracticeComp(StatesGroup):
     add_to_dict = State()
-
-
-class StateAdminPanel(StatesGroup):
-    choice_action = State()

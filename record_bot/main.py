@@ -60,11 +60,8 @@ async def admin_panel(message: types.Message) -> None:
     if str(message.from_user.id) != str(getenv("USER_ADMIN_ID")):
         await message.answer("Сюда только админ ONI-CHAN может зайти.")
     else:
-        from admin.handlers_admin import delete_members, change_members
-
-        dis.message.register(delete_members)
-        dis.message.register(change_members)
-
+        from admin.handlers_admin import admin_panel
+        dis.message.register(admin_panel)
         await message.answer(
             "Дорогой хозяйн выбери пожалуйста действие",
             reply_markup=keyboard_admin,

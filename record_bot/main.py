@@ -14,13 +14,14 @@ from keyboard.keyboard_admin import keyboard_admin
 
 
 load_dotenv("../.env")
-TOKEN = os.getenv("BOT_TOKEN")
+TOKEN = "6955649038:AAFxCJYhgxGsiX_m-T_Pt47gPRBWQEU1nk0"
 
 storage = MemoryStorage()
-form_router = Router()
+dis = Dispatcher(storage=storage)
+router_callback = Router()
 
 
-@form_router.message(CommandStart())
+@dis.message(CommandStart())
 async def command_start_handler(message: Message) -> None:
     await message.answer(
         f"Дарова заебал, {message.from_user.full_name}!\n"
@@ -28,7 +29,7 @@ async def command_start_handler(message: Message) -> None:
     )
 
 
-@form_router.message(Command("show"))
+@dis.message(Command("show"))
 async def show_subjects(message: types.Message) -> None:
     logger.info("Start function: show")
     for files in os.listdir("json_database/json_files/"):
@@ -47,51 +48,45 @@ async def show_subjects(message: types.Message) -> None:
     logger.info("Finished function: show")
 
 
-@form_router.message(Command("add"))
+@dis.message(Command("add"))
 async def add_handler(message: types.Message) -> None:
     from state.hundlers_state import add_members_op, add_members_comp, add_members_vvpd
 
     logger.info(f"Start function 'add_handler'")
-    form_router.message.register(add_members_vvpd)
-    form_router.message.register(add_members_comp)
-    form_router.message.register(add_members_op)
+    dis.message.register(add_members_vvpd)
+    dis.message.register(add_members_comp)
+    dis.message.register(add_members_op)
     await message.answer(
         "Сначала выберите предмет", reply_markup=inline_keyboard_add.as_markup()
     )
 
 
-@form_router.message(Command("admin"))
+@dis.message(Command("admin"))
 async def admin_panel(message: types.Message) -> None:
     logger.info(f"Start function 'admin_panel'")
-    if str(message.from_user.id) != os.getenv("USER_ADMIN_ID"):
+    if str(message.from_user.id) != '1195216595':
         await message.answer("Сюда только админ ONI-CHAN может зайти.")
     else:
         from admin.handlers_admin import admin_panel
-        form_router.message.register(admin_panel)
+        dis.message.register(admin_panel)
         await message.answer(
             "Дорогой хозяйн выбери пожалуйста действие",
             reply_markup=keyboard_admin,
         )
 
 
-@form_router.message(Command("help"))
+@dis.message(Command("help"))
 async def echo_handler(message: types.Message) -> None:
     await message.answer("Ой биляя чо тебе не понятно здесь?")
 
 
 async def main() -> None:
-    from callback_hundlers_add import add_vvv, add_comp, add_op
-
+    from callback_hundlers_add import add_subjects
     bot = Bot(TOKEN)
-    db = Dispatcher(storage=storage)
-    db.include_router(form_router)
-
-    form_router.callback_query.register(callback=add_vvv)
-    form_router.callback_query.register(callback=add_op)
-    form_router.callback_query.register(callback=add_comp)
-
+    dis.include_router(router_callback)
+    router_callback.callback_query.register(callback=add_subjects)
     await bot.delete_webhook(drop_pending_updates=True)
-    await db.start_polling(bot)
+    await dis.start_polling(bot)
 
 
 if __name__ == "__main__":

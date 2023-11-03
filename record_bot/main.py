@@ -1,8 +1,7 @@
 import asyncio
 import os
-from os import getenv
 
-from aiogram import Dispatcher, types, Bot
+from aiogram import Dispatcher, types, Bot, Router
 from aiogram.filters import CommandStart, Command
 from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram.types import Message
@@ -15,13 +14,13 @@ from keyboard.keyboard_admin import keyboard_admin
 
 
 load_dotenv("../.env")
-TOKEN = '6955649038:AAFxCJYhgxGsiX_m-T_Pt47gPRBWQEU1nk0'
+TOKEN = os.getenv("BOT_TOKEN")
 
 storage = MemoryStorage()
-dis = Dispatcher(storage=storage)
+form_router = Router()
 
 
-@dis.message(CommandStart())
+@form_router.message(CommandStart())
 async def command_start_handler(message: Message) -> None:
     await message.answer(
         f"Дарова заебал, {message.from_user.full_name}!\n"
@@ -29,8 +28,9 @@ async def command_start_handler(message: Message) -> None:
     )
 
 
-@dis.message(Command("show"))
+@form_router.message(Command("show"))
 async def show_subjects(message: types.Message) -> None:
+    logger.info("Start function: show")
     for files in os.listdir("json_database/json_files/"):
         string_result = ""
         file_dict = read_json(files[:-5])
@@ -44,43 +44,54 @@ async def show_subjects(message: types.Message) -> None:
         for num, members in file_dict.items():
             string_result += f"{num}: {members}\n"
         await message.answer(string_result)
+    logger.info("Finished function: show")
 
 
-@dis.message(Command("add"))
+@form_router.message(Command("add"))
 async def add_handler(message: types.Message) -> None:
+    from state.hundlers_state import add_members_op, add_members_comp, add_members_vvpd
+
     logger.info(f"Start function 'add_handler'")
+    form_router.message.register(add_members_vvpd)
+    form_router.message.register(add_members_comp)
+    form_router.message.register(add_members_op)
     await message.answer(
         "Сначала выберите предмет", reply_markup=inline_keyboard_add.as_markup()
     )
 
 
-@dis.message(Command("admin"))
+@form_router.message(Command("admin"))
 async def admin_panel(message: types.Message) -> None:
     logger.info(f"Start function 'admin_panel'")
-    if str(message.from_user.id) != '1195216595':
+    if str(message.from_user.id) != os.getenv("USER_ADMIN_ID"):
         await message.answer("Сюда только админ ONI-CHAN может зайти.")
     else:
         from admin.handlers_admin import admin_panel
-        dis.message.register(admin_panel)
+        form_router.message.register(admin_panel)
         await message.answer(
             "Дорогой хозяйн выбери пожалуйста действие",
             reply_markup=keyboard_admin,
         )
 
 
-@dis.message(Command("help"))
+@form_router.message(Command("help"))
 async def echo_handler(message: types.Message) -> None:
     await message.answer("Ой биляя чо тебе не понятно здесь?")
 
 
 async def main() -> None:
-    bot = Bot(TOKEN)
     from callback_hundlers_add import add_vvv, add_comp, add_op
 
-    dis.callback_query.register(callback=add_vvv)
-    dis.callback_query.register(callback=add_op)
-    dis.callback_query.register(callback=add_comp)
-    await dis.start_polling(bot)
+    bot = Bot(TOKEN)
+    db = Dispatcher(storage=storage)
+    db.include_router(form_router)
+
+    form_router.callback_query.register(callback=add_vvv)
+    form_router.callback_query.register(callback=add_op)
+    form_router.callback_query.register(callback=add_comp)
+
+    await bot.delete_webhook(drop_pending_updates=True)
+    await db.start_polling(bot)
 
 
 if __name__ == "__main__":

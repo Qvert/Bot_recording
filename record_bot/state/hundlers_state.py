@@ -1,13 +1,16 @@
+from loguru import logger
+
 from aiogram.fsm.context import FSMContext
 from aiogram import types
 
-from Bot_recording.record_bot.main import dis
+from Bot_recording.record_bot.main import form_router
 from Bot_recording.record_bot.json_database.write_read_json import read_json, write_json
-from Bot_recording.record_bot.state.class_state import *
+from .class_state import *
 
 
-@dis.message(AddPracticeVVPD.add_to_dict)
+@form_router.message(AddPracticeVVPD.add_to_dict_vvpd)
 async def add_members_vvpd(message: types.Message, state: FSMContext):
+    logger.info("Start function: add_members_vvpd")
     try:
         message_member = message.text.split(" ", 1)
         get_dict_members = read_json("vvpd_json")
@@ -17,10 +20,10 @@ async def add_members_vvpd(message: types.Message, state: FSMContext):
             or message_member[1] in get_dict_members.values()
         ):
             await message.answer(
-                "Извините, но вы уже записаны, если вы хотите выписаться то обратитесь к админу "
+                "Извините, но уже чел под этим номером стоит, если вы хотите выписаться то обратитесь к админу "
                 "ONI-CHAN"
             )
-            await state.set_state(AddPracticeVVPD.add_to_dict)
+            await state.set_state(AddPracticeVVPD.add_to_dict_vvpd)
         else:
             get_dict_members[message_member[0]] = message_member[1]
             get_dict_members = dict(
@@ -33,10 +36,10 @@ async def add_members_vvpd(message: types.Message, state: FSMContext):
 
     except IndexError:
         await message.answer("Извините, вы некоректно ввели данные")
-        await state.set_state(AddPracticeVVPD.add_to_dict)
+        await state.set_state(AddPracticeVVPD.add_to_dict_vvpd)
 
 
-@dis.message(AddPracticeOP.add_to_dict)
+@form_router.message(AddPracticeOP.add_to_dict_op)
 async def add_members_op(message: types.Message, state: FSMContext):
     try:
         message_member = message.text.split(" ", 1)
@@ -50,7 +53,7 @@ async def add_members_op(message: types.Message, state: FSMContext):
                 "Извините, но вы уже записаны, если вы хотите выписаться то обратитесь к админу "
                 "ONI-CHAN"
             )
-            await state.set_state(AddPracticeOP.add_to_dict)
+            await state.set_state(AddPracticeOP.add_to_dict_op)
         else:
             get_dict_members[message_member[0]] = message_member[1]
             get_dict_members = dict(
@@ -63,10 +66,10 @@ async def add_members_op(message: types.Message, state: FSMContext):
 
     except IndexError:
         await message.answer("Извините, вы некоректно ввели данные")
-        await state.set_state(AddPracticeOP.add_to_dict)
+        await state.set_state(AddPracticeOP.add_to_dict_op)
 
 
-@dis.message(AddPracticeComp.add_to_dict)
+@form_router.message(AddPracticeComp.add_to_dict_comp)
 async def add_members_comp(message: types.Message, state: FSMContext):
     try:
         message_member = message.text.split(" ", 1)
@@ -80,7 +83,7 @@ async def add_members_comp(message: types.Message, state: FSMContext):
                 "Извините, но вы уже записаны, если вы хотите выписаться то обратитесь к админу "
                 "ONI-CHAN"
             )
-            await state.set_state(AddPracticeComp.add_to_dict)
+            await state.set_state(AddPracticeComp.add_to_dict_comp)
         else:
             get_dict_members[message_member[0]] = message_member[1]
             get_dict_members = dict(
@@ -93,4 +96,4 @@ async def add_members_comp(message: types.Message, state: FSMContext):
 
     except IndexError:
         await message.answer("Извините, вы некоректно ввели данные")
-        await state.set_state(AddPracticeComp.add_to_dict)
+        await state.set_state(AddPracticeComp.add_to_dict_comp)

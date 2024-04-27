@@ -7,7 +7,7 @@ from state.class_state import *
 from state.hundlers_state import add_members_op, add_members_comp, add_members_vvpd
 from main import dis, router_callback
 
-
+#handler for subject choice
 @router_callback.callback_query()
 async def add_subjects(callback: types.CallbackQuery, state: FSMContext):
     if callback.data == 'add_vvpd':
@@ -36,7 +36,7 @@ async def add_subjects(callback: types.CallbackQuery, state: FSMContext):
     if callback.data == 'add_op':
         await add_op(callback=callback, state=state)
 
-
+#add user to the cs queue
 @router_callback.callback_query()
 async def add_comp(callback: types.CallbackQuery, state: FSMContext):
     dict_comp = read_json("comp_json")
@@ -58,7 +58,7 @@ async def add_comp(callback: types.CallbackQuery, state: FSMContext):
         )
         await state.set_state(AddPracticeComp.add_to_dict_comp)
 
-
+#add user to the op queue
 @router_callback.callback_query()
 async def add_op(callback: types.CallbackQuery, state: FSMContext):
     dis.message.register(add_members_op)

@@ -1,6 +1,7 @@
 from aiogram import types
 from aiogram.utils.keyboard import ReplyKeyboardMarkup
 
+#admin markup
 keyboard = [
     [
         types.KeyboardButton(text="Удалить черта"),

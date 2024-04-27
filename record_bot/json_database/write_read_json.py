@@ -1,6 +1,6 @@
 import json
 
-
+#write dict to json on every change?
 def write_json(dict_members: dict, name_file: str) -> None:
     """
     Function write json dict members
@@ -14,7 +14,7 @@ def write_json(dict_members: dict, name_file: str) -> None:
         json.dump(dict_members, file_write, indent=4, ensure_ascii=False)
         file_write.close()
 
-
+#load dict from json on start
 def read_json(name_file: str) -> dict:
     """
     Function read json file with dict members

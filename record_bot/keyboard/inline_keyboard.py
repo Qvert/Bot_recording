@@ -1,7 +1,7 @@
 from aiogram import types
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
-
+# keyboad used for adding a person to the queue
 inline_keyboard_add = InlineKeyboardBuilder()
 inline_keyboard_add.add(
     types.InlineKeyboardButton(text="ВВПД", callback_data="add_vvpd"),

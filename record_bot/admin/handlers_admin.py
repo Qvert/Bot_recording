@@ -7,10 +7,10 @@ from record_bot.main import dis
 #handler for admin panel
 @dis.message()
 async def admin_panel(message: types.Message) -> None:
-    if message.text == "Удалить черта":
+    if message.text == "Удалить из очереди":
         await admin_panel_delete(message=message)
 
-    if message.text == "Поменять местами чертов":
+    if message.text == "Поменять местами":
         await admin_panel_change(message=message)
 
 #TODO: implement the deletion of a person by name/index. probably by index

@@ -4,8 +4,8 @@ from aiogram.utils.keyboard import ReplyKeyboardMarkup
 #admin markup
 keyboard = [
     [
-        types.KeyboardButton(text="Удалить черта"),
-        types.KeyboardButton(text="Поменять местами чертов"),
+        types.KeyboardButton(text="Удалить из очереди"),
+        types.KeyboardButton(text="Поменять местами"),
     ],
     [
         types.KeyboardButton(text="Открыть запись"),

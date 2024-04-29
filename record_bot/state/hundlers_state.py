@@ -14,7 +14,7 @@ from state.class_state import *
 async def add_members_vvpd(message: types.Message, state: FSMContext):
     logger.info("Start function: add_members_vvpd")
     try:
-        message_member = message.text.split(" ", 1)
+        #message_member = message.text.split(" ", 1)
         get_dict_members = read_json("vvpd_json")
 
         if (

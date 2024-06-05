@@ -11,3 +11,7 @@ class AddPracticeOP(StatesGroup):
 
 class AddPracticeComp(StatesGroup):
     add_to_dict_comp = State()
+
+
+class AdminPanel(StatesGroup):
+    delete_users = State()

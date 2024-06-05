@@ -3,8 +3,7 @@ from aiogram.utils.keyboard import ReplyKeyboardMarkup
 
 keyboard = [
     [
-        types.KeyboardButton(text="Удалить черта"),
-        types.KeyboardButton(text="Поменять местами чертов"),
+        types.KeyboardButton(text="Удалить из очереди"),
     ],
     [
         types.KeyboardButton(text="Открыть запись"),

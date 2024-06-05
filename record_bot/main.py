@@ -8,23 +8,22 @@ from aiogram.types import Message
 from dotenv import load_dotenv
 from loguru import logger
 
-from json_database.write_read_json import read_json
+from database.write_read_json import read_json
 from keyboard.inline_keyboard import inline_keyboard_add
 from keyboard.keyboard_admin import keyboard_admin
 
 
 load_dotenv("../.env")
 TOKEN = "6955649038:AAFxCJYhgxGsiX_m-T_Pt47gPRBWQEU1nk0"
-
+bot = Bot(TOKEN)
 storage = MemoryStorage()
 dis = Dispatcher(storage=storage)
-router_callback = Router()
 
 
 @dis.message(CommandStart())
 async def command_start_handler(message: Message) -> None:
     await message.answer(
-        f"Дарова заебал, {message.from_user.full_name}!\n"
+        f"Приветствую, {message.from_user.full_name}!\n"
         f"Этот бот поможет не потеряться в очереди)"
     )
 
@@ -32,7 +31,7 @@ async def command_start_handler(message: Message) -> None:
 @dis.message(Command("show"))
 async def show_subjects(message: types.Message) -> None:
     logger.info("Start function: show")
-    for files in os.listdir("json_database/json_files/"):
+    for files in os.listdir("database/json_files/"):
         string_result = ""
         file_dict = read_json(files[:-5])
         if files.startswith("comp"):
@@ -50,25 +49,24 @@ async def show_subjects(message: types.Message) -> None:
 
 @dis.message(Command("add"))
 async def add_handler(message: types.Message) -> None:
-    from state.hundlers_state import add_members_op, add_members_comp, add_members_vvpd
-
     logger.info(f"Start function 'add_handler'")
-    dis.message.register(add_members_vvpd)
-    dis.message.register(add_members_comp)
-    dis.message.register(add_members_op)
-    await message.answer(
-        "Сначала выберите предмет", reply_markup=inline_keyboard_add.as_markup()
-    )
+    boolean_read = open('admin/check_entry.txt', encoding='utf-8', mode='r').read()
+    if boolean_read == 'True':
+        await message.answer(
+            "Сначала выберите предмет", reply_markup=inline_keyboard_add.as_markup())
+    else:
+        await message.answer(
+            "Извините, запись закрыта"
+        )
 
 
 @dis.message(Command("admin"))
 async def admin_panel(message: types.Message) -> None:
     logger.info(f"Start function 'admin_panel'")
+
     if str(message.from_user.id) != '1195216595':
         await message.answer("Сюда только админ ONI-CHAN может зайти.")
     else:
-        from admin.handlers_admin import admin_panel
-        dis.message.register(admin_panel)
         await message.answer(
             "Дорогой хозяйн выбери пожалуйста действие",
             reply_markup=keyboard_admin,
@@ -77,14 +75,16 @@ async def admin_panel(message: types.Message) -> None:
 
 @dis.message(Command("help"))
 async def echo_handler(message: types.Message) -> None:
-    await message.answer("Ой биляя чо тебе не понятно здесь?")
+    await message.answer("/add: добавить себя в очередь на предмет\n"
+                         "/show: показать список очередей\n"
+                         "/admin: для админов)\n")
 
 
 async def main() -> None:
-    from callback_hundlers_add import add_subjects
-    bot = Bot(TOKEN)
-    dis.include_router(router_callback)
-    router_callback.callback_query.register(callback=add_subjects)
+    import callback_hundlers_add
+    import admin.handlers_admin
+
+    dis.include_routers(callback_hundlers_add.router, admin.handlers_admin.router)
     await bot.delete_webhook(drop_pending_updates=True)
     await dis.start_polling(bot)
 

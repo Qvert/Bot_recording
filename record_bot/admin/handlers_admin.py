@@ -7,6 +7,7 @@ from Bot_recording.record_bot.database.write_read_json import read_json, write_j
 from Bot_recording.record_bot.state.class_state import AdminPanel
 from Bot_recording.record_bot.utils.dict_util import dict_name_subjects
 
+
 router = Router()
 
 
@@ -45,3 +46,4 @@ def write_check_entry(text: str) -> None:
     with open("admin/check_entry.txt", mode="w+", encoding="utf-8") as file_write:
         file_write.truncate(0)
         file_write.write(text)
+

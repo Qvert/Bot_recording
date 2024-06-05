@@ -65,10 +65,10 @@ async def admin_panel(message: types.Message) -> None:
     logger.info(f"Start function 'admin_panel'")
 
     if str(message.from_user.id) != '1195216595':
-        await message.answer("Сюда только админ ONI-CHAN может зайти.")
+        await message.answer("Доступ запрещён.")
     else:
         await message.answer(
-            "Дорогой хозяйн выбери пожалуйста действие",
+            "Дорогой хозяин выбери пожалуйста действие",
             reply_markup=keyboard_admin,
         )
 
@@ -83,7 +83,6 @@ async def echo_handler(message: types.Message) -> None:
 async def main() -> None:
     import callback_hundlers_add
     import admin.handlers_admin
-
     dis.include_routers(callback_hundlers_add.router, admin.handlers_admin.router)
     await bot.delete_webhook(drop_pending_updates=True)
     await dis.start_polling(bot)
